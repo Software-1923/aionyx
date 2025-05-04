@@ -4,10 +4,21 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
-  // Allow Clerk authentication
   experimental: {
-    serverComponentsExternalPackages: ['@clerk/nextjs']
-  }
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
+  serverExternalPackages: ['@clerk/nextjs'], // Güncellenmiş ayar
+  // Hono API configuration
+  rewrites: async () => {
+    return [
+      {
+        source: '/api/:path*',
+        destination: '/api/hono/:path*',
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

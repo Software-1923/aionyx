@@ -131,7 +131,9 @@ async function SubscriptionStatusCard({ userId }: { userId: string | undefined }
       <div className="text-2xl font-bold">{status}</div>
       <div className={`flex items-center text-sm ${statusColor} mt-2`}>
         {icon}
-        {subscription ? `Renews ${new Date(subscription.currentPeriodEnd).toLocaleDateString()}` : "Upgrade for more features"}
+        {subscription && subscription.currentPeriodEnd 
+          ? `Renews ${new Date(Number(subscription.currentPeriodEnd)).toLocaleDateString()}` 
+          : "Upgrade for more features"}
       </div>
     </>
   );

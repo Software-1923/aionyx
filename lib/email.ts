@@ -7,7 +7,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendWelcomeEmail({ email, firstName }: { email: string; firstName: string }) {
   try {
     const { data, error } = await resend.emails.send({
-      from: "Aionyx <notifications@aionyx.com>",
+      from: process.env.RESEND_API_KEY!,
       to: [email],
       subject: "Welcome to Aionyx!",
       html: `
@@ -65,7 +65,7 @@ export async function sendPaymentConfirmationEmail({
 }) {
   try {
     const { data, error } = await resend.emails.send({
-      from: "Aionyx <billing@aionyx.com>",
+      from: process.env.RESEND_API_KEY!,
       to: [email],
       subject: "Payment Confirmation",
       html: `

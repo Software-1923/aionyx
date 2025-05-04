@@ -1,4 +1,4 @@
-import { getUserPayments } from "@/lib/db";
+import { getUserPayments } from "../../lib/db";
 import { formatCurrency } from "@/utils/format-currency";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -9,9 +9,9 @@ interface PaymentHistoryProps {
 
 export default async function PaymentHistory({ userId }: PaymentHistoryProps) {
   if (!userId) return <p>No payment data available</p>;
-  
+
   const payments = await getUserPayments(userId);
-  
+
   if (payments.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -20,28 +20,6 @@ export default async function PaymentHistory({ userId }: PaymentHistoryProps) {
     );
   }
 
-  // Add some sample payments for demonstration
-  if (payments.length === 0) {
-    payments.push(
-      {
-        id: 1,
-        userId,
-        amount: 2999,
-        currency: "usd",
-        status: "succeeded",
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: 2,
-        userId,
-        amount: 2999,
-        currency: "usd",
-        status: "succeeded",
-        createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-      }
-    );
-  }
-  
   return (
     <Table>
       <TableHeader>
@@ -53,17 +31,17 @@ export default async function PaymentHistory({ userId }: PaymentHistoryProps) {
       </TableHeader>
       <TableBody>
         {payments.map((payment) => (
-          <TableRow key={payment.id}>
+          <TableRow key={String(payment.id)}>
             <TableCell>
-              {new Date(payment.createdAt).toLocaleDateString("en-US", {
+              {new Date(String(payment.createdAt ?? "")).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
               })}
             </TableCell>
-            <TableCell>{formatCurrency(payment.amount / 100)}</TableCell>
+            <TableCell>{formatCurrency((Number(payment.amount ?? 0)) / 100)}</TableCell>
             <TableCell>
-              <PaymentStatusBadge status={payment.status} />
+              <PaymentStatusBadge status={String(payment.status ?? "unknown")} />
             </TableCell>
           </TableRow>
         ))}

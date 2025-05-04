@@ -10,7 +10,7 @@ interface SubscriptionInfoProps {
 
 export default async function SubscriptionInfo({ userId }: SubscriptionInfoProps) {
   const subscription = await getUserSubscription(userId);
-  
+
   if (!subscription) {
     return (
       <div className="text-center p-6 space-y-4">
@@ -27,11 +27,10 @@ export default async function SubscriptionInfo({ userId }: SubscriptionInfoProps
       </div>
     );
   }
-  
+
   const isActive = subscription.status === "active";
   const isPastDue = subscription.status === "past_due";
-  const isTrialing = subscription.status === "trialing";
-  
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -40,10 +39,10 @@ export default async function SubscriptionInfo({ userId }: SubscriptionInfoProps
             variant={isActive ? "default" : "outline"}
             className={isActive ? "bg-success" : isPastDue ? "bg-warning text-warning-foreground" : ""}
           >
-            {subscription.plan} Plan
+            {String(subscription.plan ?? "Unknown Plan")} Plan
           </Badge>
           <span className="ml-2 text-sm text-muted-foreground">
-            ({subscription.status})
+            ({String(subscription.status)})
           </span>
         </div>
         {isActive && (
@@ -59,37 +58,41 @@ export default async function SubscriptionInfo({ userId }: SubscriptionInfoProps
           </div>
         )}
       </div>
-      
+
       <div className="space-y-2">
         <div className="flex justify-between items-center pb-2 border-b">
           <span className="text-muted-foreground">Current period ends</span>
           <span>
-            {new Date(subscription.currentPeriodEnd).toLocaleDateString("en-US", {
+            {new Date(String(subscription.currentPeriodEnd ?? "")).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
               day: "numeric",
             })}
           </span>
         </div>
-        
+
         <div className="flex justify-between items-center pb-2 border-b">
           <span className="text-muted-foreground">Subscription ID</span>
-          <span className="text-sm font-mono">{subscription.stripeSubscriptionId.substring(0, 14)}...</span>
+          <span className="text-sm font-mono">
+            {typeof subscription.stripeSubscriptionId === "string" && subscription.stripeSubscriptionId
+              ? subscription.stripeSubscriptionId.substring(0, 14) + "..."
+              : "N/A"}
+          </span>
         </div>
-        
+
         <div className="flex justify-between items-center pb-2 border-b">
           <span className="text-muted-foreground">Plan</span>
-          <span>{subscription.plan}</span>
+          <span>{String(subscription.plan ?? "Unknown Plan")}</span>
         </div>
       </div>
-      
+
       <div className="flex flex-col sm:flex-row gap-4 pt-4">
         <Button asChild variant="outline">
           <Link href="https://billing.stripe.com/p/login/test" target="_blank" rel="noopener noreferrer">
             Manage Billing
           </Link>
         </Button>
-        
+
         {isPastDue && (
           <Button asChild>
             <Link href="/dashboard/billing?update-payment=true">
